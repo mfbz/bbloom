@@ -19,7 +19,7 @@ adc = Adafruit_ADS1x15.ADS1115()
 ADC_GAIN = 1
 # MAX V depend on gain, check datasheet if unclear
 ADC_MAX_V = 4.096
-ADC_MAX_READ = 32767
+ADC_MAX_VALUE = 32767
 
 # The values to be used for soil moisture sensor % calculation as min and max values
 CSMS_AIR_VALUE = 518
@@ -45,10 +45,12 @@ while True:
         data[0] = round(((csms_v0 - CSMS_AIR_VALUE) * 100) /
                         (CSMS_WATER_VALUE - CSMS_AIR_VALUE))
 
+        # TODO: FIX
         # Read light sensor voltage reading
-        ldr_v0 = adc.read_adc(1, gain=ADC_GAIN)
+        value = adc.read_adc(1, gain=ADC_GAIN)
         # Scale reading depending on the ADS1115 scale (https://learn.adafruit.com/raspberry-pi-analog-to-digital-converters/ads1015-slash-ads1115)
-        ldr_vs = ldr_v0 * ADC_MAX_V / ADC_MAX_READ
+        # VALUE : V = MAX_VALUE : MAX_V
+        ldr_vs = value * float(ADC_MAX_V / ADC_MAX_VALUE)
         # Calculate lux with adjusted formula (https://emant.com/316002)
         data[1] = round((((LDR_V*500)/ldr_vs) - 500) / LDR_R)
 
